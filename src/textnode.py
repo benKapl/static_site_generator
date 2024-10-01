@@ -1,9 +1,14 @@
+from enum import Enum
 from typing import Optional
+
+TextType = Enum("TextType", ["NORMAL", "BOLD", "ITALIC", "CODE", "LINK", "IMAGE"])
 
 
 class  TextNode:
-    def __init__(self, text: str, text_type: str, url: Optional[str] = None) -> None:
+    def __init__(self, text: str, text_type: TextType, url: Optional[str] = None) -> None:
         self.text = text
+        if not isinstance(text_type, TextType):
+            raise Exception("not a valid text_type")
         self.text_type =  text_type
         self.url = url
 
@@ -20,8 +25,8 @@ class  TextNode:
 
 if __name__ == "__main__":
 
-    foo = TextNode("foo", "norma")
-    bar = TextNode("foo", "normal")
+    foo = TextNode("foo", TextType.BOLD)
+    bar = TextNode("foo", TextType.BOLD)
 
     print(foo == bar)
     print(bar)
