@@ -1,5 +1,4 @@
 from enum import Enum
-from dataclasses import dataclass
 from typing import Optional, List, Dict
 
 
@@ -14,20 +13,20 @@ class Tag(Enum):
     H6 = "h6"
     IMG = "img"
 
-@dataclass
+
 class HTMLNode:
-    tag: Optional[Tag] = None
-    value: Optional[str] = None
-    children: Optional[List] = None
-    props: Optional[dict] = None
-    
-    # force type checking
-    def __post_init__(self):
-        for (name, field_type) in self.__annotations__.items():
-            if not isinstance(self.__dict__[name], field_type):
-                current_type = type(self.__dict__[name])
-                raise TypeError(f"The field `{name}` was assigned by `{current_type}` instead of `{field_type}`")
-            
+    def __init__(self, tag: Optional[Tag] = None, value: Optional[str] = None, 
+                       children: Optional[List] = None, props: Optional[dict] = None):
+        if tag != None and not isinstance(tag, Tag):
+            raise Exception("not a valid tag")
+        self.tag = tag
+        self.value = value
+        self.children = children
+        self.props = props
+
+    def __repr__(self):
+        return f"HTMLNode(tag={self.tag.__repr__()}, value={self.value}, children={self.children}, props={self.props})"
+
     def to_html(self):
         raise NotImplementedError
     
@@ -40,13 +39,18 @@ class HTMLNode:
 
         return prop_string.strip()
     
+class LeafNode(HTMLNode):
+    """A LeafNode is a type of HTMLNode that represents a single HTML tag with no children.
+    """
+    pass
+    # super().__init___()
+
 if __name__ == "__main__":
 
-    foo = HTMLNode(tag=Tag.A, 
-                   props={"href": "https://www.google.com", "target": "_blank"})
+    foo = HTMLNode()
     
-    bar = HTMLNode()
+    # bar = HTMLNode()
 
-    node = HTMLNode(Tag.P, "This is a paragraph", [bar], {"class": "my_class"}) 
+    # node = HTMLNode(Tag.P, "This is a paragraph", [bar], {"class": "my_class"}) 
 
-    print(node)
+    print(foo)
