@@ -1,13 +1,11 @@
 import pytest
 
-from htmlnode import Tag
-from leafnode import LeafNode
-from parentnode import ParentNode
+from htmlnode import Tag, LeafNode, ParentNode
 
 
 def test_to_html_no_tag():
     with pytest.raises(ValueError):
-        ParentNode(tag=None, children=[LeafNode(None, "Value")]).to_html()
+        ParentNode(tag=None, children=[LeafNode(None, "Value")]).to_html() # type: ignore
 
 def test_to_html_no_children():
     with pytest.raises(ValueError):

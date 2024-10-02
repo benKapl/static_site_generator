@@ -1,7 +1,6 @@
 from unittest import main, TestCase
 
-from htmlnode import Tag
-from leafnode import LeafNode
+from htmlnode import Tag, LeafNode
 
 
 class TestLeafNode(TestCase):
