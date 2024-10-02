@@ -1,1 +1,1 @@
-python3 -m unittest discover -s src/tests --verbose
+python3 -m pytest src/tests --verbose

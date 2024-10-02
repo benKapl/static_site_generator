@@ -1,5 +1,7 @@
+import sys
 from enum import Enum
 from typing import Optional
+
 
 TextType = Enum("TextType", ["NORMAL", "BOLD", "ITALIC", "CODE", "LINK", "IMAGE"])
 
@@ -18,7 +20,7 @@ class  TextNode:
             and self.url == other.url):
             return True
         return False
-    
+
     def __repr__(self):
         return f"Textnode(text={self.text}, text_type={self.text_type.__repr__()}, url={self.url})"
         
