@@ -33,15 +33,19 @@ class TestHTMLNode(TestCase):
 class TestLeafNode(TestCase):
     def test_init_without_value(self):
         with self.assertRaises(TypeError):
-            LeafNode() # type: ignore
+            LeafNode(tag=None) # type: ignore
+
+    def test_init_without_tag(self):
+        with self.assertRaises(TypeError):
+            LeafNode(value="value") # type: ignore
 
     def test_value_is_none(self):
-        node = LeafNode(value=None) # type: ignore
+        node = LeafNode(tag=Tag.P, value=None) # type: ignore
         with self.assertRaises(ValueError):
             node.to_html()
 
     def test_tag_is_none(self):
-        node = LeafNode(value = "This is a raw text")
+        node = LeafNode(tag=None, value="This is a raw text")
         self.assertEqual(node.to_html(), "This is a raw text")     
 
     def test_tag_without_props(self):
