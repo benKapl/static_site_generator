@@ -1,4 +1,6 @@
 from textnode import TextNode, TextType
+import sys
+
 
 def main():
     dummy_textnode = TextNode("Deux bibous sont amoureux", TextType.BOLD, "https://www.bibous4ever.com")
@@ -7,3 +9,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    p = sys.path
+    print(p)
+

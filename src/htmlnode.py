@@ -31,7 +31,7 @@ class HTMLNode:
         raise NotImplementedError
     
     def props_to_html(self):
-        """ Transform the attributes in the props dictionnary into a html readble attribute
+        """ Transform the attributes in the props dictionnary into a html readable attribute
         """
         prop_string =""
         for key, value in self.props.items(): # type: ignore
@@ -39,18 +39,30 @@ class HTMLNode:
 
         return prop_string.strip()
     
+    
 class LeafNode(HTMLNode):
     """A LeafNode is a type of HTMLNode that represents a single HTML tag with no children.
     """
-    pass
-    # super().__init___()
+    def __init__(self, value: str, tag: Optional[Tag] = None, props: Optional[dict] = None):
+        super().__init__(tag, value, None, props)
+
+    def to_html(self):
+        if not self.value:
+            raise ValueError("Leaf node must have a value")
+        
+        if not self.tag:
+            return self.value # An HTMLNode without a tag will just render as raw text
+        
+        # return f"<{self.tag.value} {self.props_to_html() if self.props else ''}>{self.value}</{self.tag.value}>"
+        return f"<{self.tag.value if not self.props else self.tag.value + ' ' + self.props_to_html()}>{self.value}</{self.tag.value}>"
+        
+
+
+        
 
 if __name__ == "__main__":
 
-    foo = HTMLNode()
-    
-    # bar = HTMLNode()
+    node2 = LeafNode(value="This is a paragraph", tag=Tag.P)
+    node3 = LeafNode("This is a raw text")
 
-    # node = HTMLNode(Tag.P, "This is a paragraph", [bar], {"class": "my_class"}) 
 
-    print(foo)
