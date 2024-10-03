@@ -22,26 +22,25 @@ def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: 
 
             if len(splitted_text) % 2 == 0:
                 raise Exception("Imbalanced delimiter situation")
-            
-            # Check if the element at index 0 is not empty
-            if splitted_text[0]:
-                to_extend = []
+
+            def nodes_to_extend(even_text_type, odd_text_type):
+                """ Creates the new nodes and add them in a list based on the index of the text they are based on.
+                Take two arguments : 
+                - text-type for even index
+                - text-type for odd_index
+                Return a list with the nodes in the right ordre
+                """
+                nodes_to_add = []
                 for i in range(len(splitted_text)):
-                    if i % 2 == 0:
-                        to_extend.append(TextNode(splitted_text[i], text_type=TextType.NORMAL))
-                    else:
-                        to_extend.append(TextNode(splitted_text[i], text_type=text_type))
-                new_nodes.extend(to_extend)
+                    nodes_to_add.append(TextNode(splitted_text[i], text_type=even_text_type if i % 2 == 0 else odd_text_type))
+                return nodes_to_add
+
+            # Check if the element at index 0 is not empty -> the text doesn't start with the delimiter
+            if splitted_text[0]:
+                new_nodes.extend(nodes_to_extend(even_text_type=TextType.NORMAL, odd_text_type=text_type))
             else:
                 splitted_text = splitted_text[1:-1] #strip the empty element at the edges of the list
-                to_extend = []
-                for i in range(len(splitted_text)):
-                    if i % 2 == 0:
-                        to_extend.append(TextNode(splitted_text[i], text_type=text_type))
-                    else:
-                        to_extend.append(TextNode(splitted_text[i], text_type=TextType.NORMAL))
-
-                new_nodes.extend(to_extend)
+                new_nodes.extend(nodes_to_extend(even_text_type=text_type, odd_text_type=TextType.NORMAL))
 
     return new_nodes
 
