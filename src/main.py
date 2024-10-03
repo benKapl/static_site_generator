@@ -1,5 +1,4 @@
 from textnode import TextNode, TextType
-import sys
 
 
 def main():
@@ -10,6 +9,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-    p = sys.path
-    print(p)
+
 
