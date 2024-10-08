@@ -5,7 +5,7 @@ from htmlnode import Tag, LeafNode
 
 
 class TextType(Enum):
-    TEXTE = 1
+    TEXT = 1
     BOLD = 2
     ITALIC = 3
     CODE = 4
@@ -38,7 +38,7 @@ def text_node_to_html_node(text_node: TextNode):
     Return a LeafNode object
     """
     match text_node.text_type:
-        case TextType.TEXTE:
+        case TextType.TEXT:
             return LeafNode(None, value=text_node.text)
         
         case TextType.BOLD:
@@ -62,7 +62,7 @@ def text_node_to_html_node(text_node: TextNode):
 
 if __name__ == "__main__":
 
-    normal = TextNode("I am normal", TextType.TEXTE)
+    normal = TextNode("I am normal", TextType.TEXT)
     bold = TextNode("I am bold", TextType.BOLD)
     italic = TextNode("I am bold", TextType.ITALIC)
     code = TextNode("I am some code line\nHello World", TextType.CODE)
