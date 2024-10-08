@@ -38,7 +38,8 @@ def block_to_block_type(block: str) -> BlockType:
         return BlockType.ORDERED_LIST
     else: 
         return BlockType.PARAGRAPH
-        
+    
+# All bool functions used for asserting block type
 def is_heading(text: str) -> bool:
     """Determine if the input text is a markdown heading"""
     pattern = r'^#{1,6} .*$'
@@ -69,6 +70,7 @@ def is_ordered_list(text: str) -> bool:
     # Compare pattern with a list of the first 3 characters of each line
     numbers = [line[0:3] for line in lines]
     return numbers == pattern
+
 
 
 if __name__ == "__main__":

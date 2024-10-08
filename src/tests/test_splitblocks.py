@@ -78,7 +78,7 @@ class TestBlockToBlockType:
         assert block_to_block_type(input_case) == BlockType.PARAGRAPH
 
     def test_is_ordered_list_false_wrong_spacing(self):
-        input_case = "1. Ordered list\n2. \n3. No space !!"
+        input_case = "1. Ordered list\n2. \n3.No space !!"
         assert block_to_block_type(input_case) == BlockType.PARAGRAPH
 
     def test_is_ordered_list_false_no_point(self):
