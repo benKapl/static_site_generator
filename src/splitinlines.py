@@ -150,7 +150,8 @@ if __name__ == "__main__":
     print(nodes)
 
     html_elements = [text_node_to_html_node(node) for node in nodes]
-    print("".join([leafnode.to_html() for leafnode in html_elements]))
+    pprint(html_elements)
+    # pprint("".join([leafnode.to_html() for leafnode in html_elements]))
     # for node in nodes: 
     #         print(node)
     #         leafnode = text_node_to_html_node(node) 

@@ -16,7 +16,8 @@ class Tag(Enum):
     UL = "ul"
     LI = "li"
     IMG = "img"
-    CODE = "code"
+    CODE = "code"  # DID YOU THINK OF <pre></pre> ???
+    DIV = "div"
 
 
 class HTMLNode:
