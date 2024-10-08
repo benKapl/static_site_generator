@@ -121,15 +121,15 @@ def split_nodes_link(old_nodes):
 
 
 def text_to_textnodes(text):
-    first_node = TextNode(text, TextType.NORMAL)
-    bold_nodes = split_nodes_delimiter([first_node], "**", TextType.BOLD)
-    italic_nodes = split_nodes_delimiter(bold_nodes, "*", TextType.ITALIC)
-    code_nodes = split_nodes_delimiter(italic_nodes, "`", TextType.CODE)
-    image_nodes = split_nodes_image(code_nodes)
-    link_nodes = split_nodes_link(image_nodes)
+    textnode_only = TextNode(text, TextType.NORMAL)
+    text_bold = split_nodes_delimiter([textnode_only], "**", TextType.BOLD)
+    text_bold_italic = split_nodes_delimiter(text_bold, "*", TextType.ITALIC)
+    text_bold_italic_code = split_nodes_delimiter(text_bold_italic, "`", TextType.CODE)
+    text_bold_italic_code_img = split_nodes_image(text_bold_italic_code)
+    text_bold_italic_code_img_link = split_nodes_link(text_bold_italic_code_img)
 
 
-    return link_nodes
+    return text_bold_italic_code_img_link
 
 
 
@@ -137,8 +137,9 @@ def text_to_textnodes(text):
 if __name__ == "__main__":
     from pprint import pprint
 
-    text = "This is a **text** with an *italic* word and a `code block` and **another bold text** and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
-    nodes = text_to_textnodes(text)
+    text = "This is a **bold text** with an *italic* word and a `code block` and **another bold text** and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+    textnode = TextNode("This is an image ", TextType.NORMAL)
+    nodes = text_to_textnodes(textnode)
     pprint(nodes)
 
     html_elements = [text_node_to_html_node(node) for node in nodes]
