@@ -3,7 +3,14 @@ from typing import Optional
 
 from htmlnode import Tag, LeafNode
 
-TextType = Enum("TextType", ["NORMAL", "BOLD", "ITALIC", "CODE", "LINK", "IMAGE"])
+
+class TextType(Enum):
+    TEXTE = 1
+    BOLD = 2
+    ITALIC = 3
+    CODE = 4
+    LINK = 5
+    IMAGE = 6
 
 
 class TextNode:
@@ -31,7 +38,7 @@ def text_node_to_html_node(text_node: TextNode):
     Return a LeafNode object
     """
     match text_node.text_type:
-        case TextType.NORMAL:
+        case TextType.TEXTE:
             return LeafNode(None, value=text_node.text)
         
         case TextType.BOLD:
@@ -55,7 +62,7 @@ def text_node_to_html_node(text_node: TextNode):
 
 if __name__ == "__main__":
 
-    normal = TextNode("I am normal", TextType.NORMAL)
+    normal = TextNode("I am normal", TextType.TEXTE)
     bold = TextNode("I am bold", TextType.BOLD)
     italic = TextNode("I am bold", TextType.ITALIC)
     code = TextNode("I am some code line\nHello World", TextType.CODE)

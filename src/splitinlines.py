@@ -29,7 +29,7 @@ def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: 
     for node in old_nodes:
         
         # If an "old node" is not a "text" type, just add it to the new list as-is
-        if node.text_type != TextType.NORMAL:
+        if node.text_type != TextType.TEXTE:
             new_nodes.append(node)
 
         elif delimiter not in node.text: # Old node is NORMAL
@@ -44,7 +44,7 @@ def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: 
             # Transform part into textnode, alternate type between indexes
             # and add them to new_nodes
             for i in range(len(parts)):
-                new_nodes.append(TextNode(parts[i], TextType.NORMAL if i % 2 == 0 else text_type))
+                new_nodes.append(TextNode(parts[i], TextType.TEXTE if i % 2 == 0 else text_type))
 
     return new_nodes
 
@@ -71,7 +71,7 @@ def split_nodes_image(old_nodes: List[TextNode]) -> List[TextNode]:
 
                 # add a normal node of the first part and add a image node
                 # with the retrive alt and url
-                new_nodes.extend([TextNode(parts[0], TextType.NORMAL),
+                new_nodes.extend([TextNode(parts[0], TextType.TEXTE),
                                   TextNode(alt, TextType.IMAGE, url)])     
                 
                 # make the second half of the next part to be splitted 
@@ -79,7 +79,7 @@ def split_nodes_image(old_nodes: List[TextNode]) -> List[TextNode]:
 
                 # add last text part if there is no image in it
                 if not extract_markdown_images(text):
-                    new_nodes.append(TextNode(parts[1], TextType.NORMAL))
+                    new_nodes.append(TextNode(parts[1], TextType.TEXTE))
                 
     # return a list cleared of NORMAL nodes with empty text
     return [node for node in new_nodes if node.text or node.text_type == TextType.IMAGE]
@@ -106,7 +106,7 @@ def split_nodes_link(old_nodes):
 
                 # add a normal node of the first part and add a link node
                 # with the retrive alt and url
-                new_nodes.extend([TextNode(parts[0], TextType.NORMAL),
+                new_nodes.extend([TextNode(parts[0], TextType.TEXTE),
                                   TextNode(anchor, TextType.LINK, url)])     
                 
                 # make the second half of the next part to be splitted 
@@ -114,14 +114,14 @@ def split_nodes_link(old_nodes):
 
                 # add last text part if there is no image in it
                 if not extract_markdown_links(text):
-                    new_nodes.append(TextNode(parts[1], TextType.NORMAL))
+                    new_nodes.append(TextNode(parts[1], TextType.TEXTE))
                 
     # return a list cleared of NORMAL nodes with empty text
     return [node for node in new_nodes if node.text or node.text_type == TextType.LINK]
 
 
 def text_to_textnodes(text):
-    textnode_only = TextNode(text, TextType.NORMAL)
+    textnode_only = TextNode(text, TextType.TEXTE)
     text_bold = split_nodes_delimiter([textnode_only], "**", TextType.BOLD)
     text_bold_italic = split_nodes_delimiter(text_bold, "*", TextType.ITALIC)
     text_bold_italic_code = split_nodes_delimiter(text_bold_italic, "`", TextType.CODE)
@@ -138,9 +138,9 @@ if __name__ == "__main__":
     from pprint import pprint
 
     text = "This is a **bold text** with an *italic* word and a `code block` and **another bold text** and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
-    textnode = TextNode("This is an image ", TextType.NORMAL)
+    textnode = TextNode("This is an image ", TextType.TEXTE)
     nodes = text_to_textnodes(textnode)
-    pprint(nodes)
+    print(nodes)
 
     html_elements = [text_node_to_html_node(node) for node in nodes]
     print("".join([leafnode.to_html() for leafnode in html_elements]))

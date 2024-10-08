@@ -1,7 +1,7 @@
 import pytest
 
 from textnode import TextNode, TextType
-from splitnodes import (split_nodes_delimiter, 
+from splitinlines import (split_nodes_delimiter, 
                                split_nodes_image,
                                split_nodes_link,
                                extract_markdown_images, 
@@ -10,38 +10,38 @@ from splitnodes import (split_nodes_delimiter,
 
 class TestSplitNodesDelimiter:
     def test_bold_delimiter(self):
-        node = TextNode("This is **bold** text", TextType.NORMAL)
+        node = TextNode("This is **bold** text", TextType.TEXTE)
         result = split_nodes_delimiter([node], "**", TextType.BOLD)
         assert result == [
-            TextNode("This is ", TextType.NORMAL),
+            TextNode("This is ", TextType.TEXTE),
             TextNode("bold", TextType.BOLD),
-            TextNode(" text",TextType.NORMAL)
+            TextNode(" text",TextType.TEXTE)
         ]
 
     def test_text_starts_with_italic_part(self):
-        node = TextNode("*Italic* is who i am ", TextType.NORMAL)
+        node = TextNode("*Italic* is who i am ", TextType.TEXTE)
         result = split_nodes_delimiter([node], "*", TextType.ITALIC)
         assert result == [
-            TextNode("", TextType.NORMAL),
+            TextNode("", TextType.TEXTE),
             TextNode("Italic", TextType.ITALIC),
-            TextNode(" is who i am ", TextType.NORMAL),
+            TextNode(" is who i am ", TextType.TEXTE),
         ]   
 
     def test_multiple_code_delimiters(self):
-        node = TextNode("Here's some `inline code` and more `code`", TextType.NORMAL)
+        node = TextNode("Here's some `inline code` and more `code`", TextType.TEXTE)
         result = split_nodes_delimiter([node], "`", TextType.CODE)
         assert result == [
-            TextNode("Here's some ", TextType.NORMAL),
+            TextNode("Here's some ", TextType.TEXTE),
             TextNode("inline code", TextType.CODE),
-            TextNode(" and more ", TextType.NORMAL),
+            TextNode(" and more ", TextType.TEXTE),
             TextNode("code", TextType.CODE),
-            TextNode("", TextType.NORMAL)
+            TextNode("", TextType.TEXTE)
         ]
 
     def test_append_nodes_with_not_NORMAL_TextType(self):
         code_node = TextNode("`I am a code line`", TextType.CODE)
         italic_node = TextNode("`I am an italic line`", TextType.ITALIC)
-        result = split_nodes_delimiter([code_node, italic_node], "", TextType.NORMAL)
+        result = split_nodes_delimiter([code_node, italic_node], "", TextType.TEXTE)
         assert result == [
             TextNode("`I am a code line`", TextType.CODE),
             TextNode("`I am an italic line`", TextType.ITALIC)
@@ -49,81 +49,81 @@ class TestSplitNodesDelimiter:
 
     def test_imbalanced_delimiter(self):
         with pytest.raises(Exception):
-            node = TextNode("`code block` text with non closed `delimiter", TextType.NORMAL)
+            node = TextNode("`code block` text with non closed `delimiter", TextType.TEXTE)
             split_nodes_delimiter([node], "`", TextType.CODE)
 
 
 class TestSplitNodesImages:
     def test_single_image(self):
-        node = TextNode("Check out this ![alt](http://image.url)", TextType.NORMAL)
+        node = TextNode("Check out this ![alt](http://image.url)", TextType.TEXTE)
         result = split_nodes_image([node])
         expected = [
-            TextNode("Check out this ", TextType.NORMAL),
+            TextNode("Check out this ", TextType.TEXTE),
             TextNode("alt", TextType.IMAGE, "http://image.url")
         ]
         assert result == expected
     
     def test_multiple_images(self):
-        node = TextNode("Image one ![one](http://one.url) and two ![two](http://two.url)", TextType.NORMAL)
+        node = TextNode("Image one ![one](http://one.url) and two ![two](http://two.url)", TextType.TEXTE)
         result = split_nodes_image([node])
         expected = [
-            TextNode("Image one ", TextType.NORMAL),
+            TextNode("Image one ", TextType.TEXTE),
             TextNode("one", TextType.IMAGE, "http://one.url"),
-            TextNode(" and two ", TextType.NORMAL),
+            TextNode(" and two ", TextType.TEXTE),
             TextNode("two", TextType.IMAGE, "http://two.url")
         ]
         assert result == expected
     
     def test_no_image(self):
-        node = TextNode("Just text with no image", TextType.NORMAL)
+        node = TextNode("Just text with no image", TextType.TEXTE)
         result = split_nodes_image([node])
         expected = [node]
         assert result == expected
     
     def test_starts_with_image(self):
-        node = TextNode("![start](http://start.url) followed by text", TextType.NORMAL)
+        node = TextNode("![start](http://start.url) followed by text", TextType.TEXTE)
         result = split_nodes_image([node])
         expected = [
             TextNode("start", TextType.IMAGE, "http://start.url"),
-            TextNode(" followed by text", TextType.NORMAL)
+            TextNode(" followed by text", TextType.TEXTE)
         ]
         assert result == expected
 
 
 class TestSplitNodesLinks:
     def test_single_link(self):
-        node = TextNode("Visit [Boot.dev](http://boot.dev)", TextType.NORMAL)
+        node = TextNode("Visit [Boot.dev](http://boot.dev)", TextType.TEXTE)
         result = split_nodes_link([node])
         expected = [
-            TextNode("Visit ", TextType.NORMAL),
+            TextNode("Visit ", TextType.TEXTE),
             TextNode("Boot.dev", TextType.LINK, "http://boot.dev")
         ]
         assert result == expected
 
     def test_multiple_links(self):
-        node = TextNode("Here's a [link](http://link1.com) and another [link](http://link2.com).", TextType.NORMAL)
+        node = TextNode("Here's a [link](http://link1.com) and another [link](http://link2.com).", TextType.TEXTE)
         result = split_nodes_link([node])
         expected = [
-            TextNode("Here's a ", TextType.NORMAL),
+            TextNode("Here's a ", TextType.TEXTE),
             TextNode("link", TextType.LINK, "http://link1.com"),
-            TextNode(" and another ", TextType.NORMAL),
+            TextNode(" and another ", TextType.TEXTE),
             TextNode("link", TextType.LINK, "http://link2.com"),
-            TextNode(".", TextType.NORMAL),
+            TextNode(".", TextType.TEXTE),
         ]
         assert result == expected
 
     def test_no_link(self):
-        node = TextNode("Plain text without links", TextType.NORMAL)
+        node = TextNode("Plain text without links", TextType.TEXTE)
         result = split_nodes_link([node])
         expected = [node]
         assert result == expected
 
     def test_starts_with_link(self):
-        node = TextNode("[Boot.dev](http://boot.dev) is a great site", TextType.NORMAL)
+        node = TextNode("[Boot.dev](http://boot.dev) is a great site", TextType.TEXTE)
         result = split_nodes_link([node])
         expected = [
             TextNode("Boot.dev", TextType.LINK, "http://boot.dev"),
-            TextNode(" is a great site", TextType.NORMAL)
+            TextNode(" is a great site", TextType.TEXTE)
         ]
         assert result == expected
 
@@ -177,15 +177,15 @@ class TestTextToTextNodes:
     def test_all_cases(self):
         input_text = """This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"""
         expected_output = [
-            TextNode("This is ", TextType.NORMAL),
+            TextNode("This is ", TextType.TEXTE),
             TextNode("text", TextType.BOLD),
-            TextNode(" with an ", TextType.NORMAL),
+            TextNode(" with an ", TextType.TEXTE),
             TextNode("italic", TextType.ITALIC),
-            TextNode(" word and a ", TextType.NORMAL),
+            TextNode(" word and a ", TextType.TEXTE),
             TextNode("code block", TextType.CODE),
-            TextNode(" and an ", TextType.NORMAL),
+            TextNode(" and an ", TextType.TEXTE),
             TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
-            TextNode(" and a ", TextType.NORMAL),
+            TextNode(" and a ", TextType.TEXTE),
             TextNode("link", TextType.LINK, "https://boot.dev"),
         ]
         assert text_to_textnodes(input_text) == expected_output
@@ -193,11 +193,11 @@ class TestTextToTextNodes:
     def test_several_bold_delimiters(self):
         input_text = "This is **bold text** and **another bold** section."
         expected_output = [
-            TextNode("This is ", TextType.NORMAL),
+            TextNode("This is ", TextType.TEXTE),
             TextNode("bold text", TextType.BOLD),
-            TextNode(" and ", TextType.NORMAL),
+            TextNode(" and ", TextType.TEXTE),
             TextNode("another bold", TextType.BOLD),
-            TextNode(" section.", TextType.NORMAL)
+            TextNode(" section.", TextType.TEXTE)
 ]
         assert text_to_textnodes(input_text) == expected_output
 
@@ -208,11 +208,11 @@ class TestTextToTextNodes:
     def test_multiple_images(self):
         input_text = "This is an image ![first image](http://example.com/1.jpg) and another image ![second image](http://example.com/2.jpg)."
         expected_output = [
-            TextNode("This is an image ", TextType.NORMAL),
+            TextNode("This is an image ", TextType.TEXTE),
             TextNode("first image", TextType.IMAGE, "http://example.com/1.jpg"),
-            TextNode(" and another image ", TextType.NORMAL),
+            TextNode(" and another image ", TextType.TEXTE),
             TextNode("second image", TextType.IMAGE, "http://example.com/2.jpg"),
-            TextNode(".", TextType.NORMAL)
+            TextNode(".", TextType.TEXTE)
         ]
         assert text_to_textnodes(input_text) == expected_output
 

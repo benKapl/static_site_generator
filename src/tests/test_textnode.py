@@ -10,22 +10,22 @@ class TestTextNode(TestCase):
         self.assertEqual(node1, node2)
 
     def test_equal_with_no_url(self):
-        node1 = TextNode("This is a new text", TextType.NORMAL)
-        node2 = TextNode("This is a new text", TextType.NORMAL)
+        node1 = TextNode("This is a new text", TextType.TEXTE)
+        node2 = TextNode("This is a new text", TextType.TEXTE)
         self.assertEqual(node1, node2)
 
     def test_not_eq_with_diff_text(self):
-        node1 = TextNode("This is a text", TextType.NORMAL)
-        node2 = TextNode("This is a different text", TextType.NORMAL)
+        node1 = TextNode("This is a text", TextType.TEXTE)
+        node2 = TextNode("This is a different text", TextType.TEXTE)
         self.assertNotEqual(node1, node2)
 
     def test_not_eq_with_diff_texttype(self):
-        node1 = TextNode("This is a text", TextType.NORMAL)
+        node1 = TextNode("This is a text", TextType.TEXTE)
         node2 = TextNode("This is a text", TextType.BOLD)
         self.assertNotEqual(node1, node2)
 
     def test_not_eq_with_diff_url(self):
-        node1 = TextNode("This is a text", TextType.NORMAL, "https://www.url.com")
+        node1 = TextNode("This is a text", TextType.TEXTE, "https://www.url.com")
         node2 = TextNode("This is a text", TextType.BOLD)
         self.assertNotEqual(node1, node2)
 
@@ -38,9 +38,9 @@ class TestTextNode(TestCase):
             TextNode("This is a text", TextType.normal) # type: ignore
 
 # Continue with pytest
-class Testtest_node_to_html:
+class TestTextNodeToHtml:
     def test_text_node_to_html_node_normal(self):
-        text_node = TextNode("I am normal", TextType.NORMAL)
+        text_node = TextNode("I am normal", TextType.TEXTE)
         transformed_node = text_node_to_html_node(text_node)
         assert transformed_node.to_html() == "I am normal"
 
