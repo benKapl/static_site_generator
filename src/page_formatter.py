@@ -7,18 +7,6 @@ from splitblocks import BlockType, markdown_to_blocks, block_to_block_type
 from textnode import TextType, TextNode
 
 
-def is_markdown_image(text: str) -> bool:
-    """Determine if the input text is a markdown image"""
-    pattern = r'!\[(.*?)\]\((.*?)\)'
-    return bool(re.match(pattern, text))
-
-
-def is_markdown_link(text: str) -> bool:
-    """Determine if the input text is a markdown link"""
-    pattern = r'\[(.*?)\]\((.*?)\)'
-    return bool(re.match(pattern, text))
-
-
 def text_to_textnodes(text: str) -> List[TextNode]:
     """Take a raw string full of inline markdown element and split it
     into a list of relevant TextNodes
@@ -33,8 +21,8 @@ def text_to_textnodes(text: str) -> List[TextNode]:
     all_nodes = split_nodes_delimiter(nodes_with_italic, "`", TextType.CODE) # add code nodes
     
     # return all nodes with empty textnodes removed
-    return all_nodes
     return [node for node in all_nodes if not (node.text=="" and TextType.TEXT)]
+    return all_nodes
 
 
 def text_node_to_html_node(text_node: TextNode):
@@ -75,26 +63,35 @@ def text_to_children(text: str) -> List[HTMLNode]:
 def markdown_to_html_node(markdown: str) -> HTMLNode:
 
     blocks = markdown_to_blocks(markdown)
-
     document_nodes = []
+
     for block in blocks:
-        # print(block_to_block_type(block), block)
         match block_to_block_type(block):
             case BlockType.PARAGRAPH:
                 document_nodes.append(ParentNode(tag=Tag.P, children=text_to_children(block)))
             case BlockType.HEADING:
                 document_nodes.append(ParentNode(tag=get_heading_tag(block), 
-                                                 children=text_to_children(strip_markdown_heading(block))))
+                                                 children=text_to_children(format_markdown_heading(block))))
             case BlockType.CODE:
                 document_nodes.append(ParentNode(tag=Tag.CODE, 
-                                                 children=text_to_children(strip_markdown_code(block))))
+                                                 children=text_to_children(format_markdown_code(block))))
             case BlockType.QUOTE:
                 document_nodes.append(ParentNode(tag=Tag.QUOTE, 
-                                                 children=text_to_children(strip_markdown_quote(block))))
+                                                 children=text_to_children(format_markdown_quote(block))))
+            case BlockType.UNORDERED_LIST:
+                document_nodes.append(ParentNode(Tag.UL, 
+                                                 children=markdown_lists_to_li_nodes(text=block, index=2)))
+
+            case BlockType.ORDERED_LIST:
+                document_nodes.append(ParentNode(Tag.OL, 
+                                                 children=markdown_lists_to_li_nodes(text=block, index=3)))
+                
+            case _:
+                raise Exception("not a valid blocktype")
 
     return ParentNode(Tag.DIV, children=document_nodes)
 
-
+# Helper functions for markdown_to_html_nodes below
 def get_heading_tag(text: str) -> Tag:
     """ Return the html heading tag of a markdown text block 
     based on the number of hashtags in it
@@ -119,7 +116,7 @@ def get_heading_tag(text: str) -> Tag:
             raise Exception("invalid number of #")
 
 
-def strip_markdown_heading(text: str) -> str:
+def format_markdown_heading(text: str) -> str:
     """ Strip markdown hashtags at the beginning 
         of a markdown heading block
     """
@@ -130,7 +127,7 @@ def strip_markdown_heading(text: str) -> str:
     return text.lstrip(markdown_headings).lstrip()
 
 
-def strip_markdown_code(text: str) -> str:
+def format_markdown_code(text: str) -> str:
     """ Strip markdown code backticks at the beginning 
         and end of a markdown code block
     """
@@ -142,7 +139,7 @@ def strip_markdown_code(text: str) -> str:
     return "\n".join(lines).strip()
 
 
-def strip_markdown_quote(text: str) -> str:
+def format_markdown_quote(text: str) -> str:
     """ Strip markdown quote delimiter (">") and spaces
     at the begining of each code line
     """
@@ -155,48 +152,33 @@ def strip_markdown_quote(text: str) -> str:
     return "\n".join(lines)
 
 
+def markdown_lists_to_li_nodes(text: str, index: int) -> List[ParentNode]:
+    """Takes a string block of markdown list elements (ordered and unordered),
+    the index at which the line must be cut
+    and return a list of ParentNode of tag LI with the formated lines
+    """
+    lines = text.split("\n")
+    lines = [line[index:] for line in lines]
+    return [ParentNode(Tag.LI, children=text_to_children(line)) for line in lines]
+    
+
+
 if __name__ == "__main__":
     from pprint import pprint
-
-    print(text_to_textnodes(""))
-
-
-    text = "This is a **bold text** with an *italic* word and a `code block` and **another bold text** and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
-    nodes = text_to_textnodes(text)
-    # pprint(nodes)
-
-    children = [text_node_to_html_node(node) for node in nodes]
-    node1 = ParentNode(tag=Tag.P, children=children)
-    node2 = LeafNode(None, value="some more text")    
-    master_parent = ParentNode(Tag.DIV, children=[node1, node2])
-    # print(master_parent.to_html())
-    # pprint(html_elements)
-    # print("".join([leafnode.to_html() for leafnode in html_elements]))
+    input_text = "*entire text as italic*"
 
 
-    html_doc = """
-## Partie 1
+    ul_doc = """
+> voici une preière list
+> avec des élément **gras** mais non ordonnés
 
-Voici une partie avec un headings. Je vais mettre un image tient : ![Big O Graph](https://cdn-media-1.freecodecamp.org/images/1*KfZYFUT2OKfjekJlCeYvuQ.jpeg)
-
-Ainsi qu'un lien : [-- source](https://www.bigocheatsheet.com/)
-
-```python
-def add(a, b)
-    return a + b
-```
-
-## partie 2
-
-coucou la partie 2 !
-
->
-
-etc ztc
+1. et de un
+2. et de *deux*
+3. et de trois
 """
 
-    # pprint(markdown_to_html_node(html_doc).children)
-    print(markdown_to_html_node(html_doc).to_html())
+    # pprint(markdown_to_html_node(ul_doc).children)
+    # print(markdown_to_html_node(ul_doc).to_html())
     # for i in markdown_to_blocks(html_doc):
     #     print(i)
 
@@ -237,3 +219,27 @@ The algorithms that slow down the fastest in our chart are the factorial and exp
 > [!attention] [[Constants don't matter]]
 
 """
+
+
+    html_doc = """
+## Partie 1
+
+Voici une partie avec un headings. Je vais mettre un image tient : ![Big O Graph](https://cdn-media-1.freecodecamp.org/images/1*KfZYFUT2OKfjekJlCeYvuQ.jpeg)
+
+Ainsi qu'un lien : [-- source](https://www.bigocheatsheet.com/)
+
+```python
+def add(a, b)
+    return a + b
+```
+
+## partie 2
+
+coucou la partie 2 !
+
+>
+
+etc ztc
+"""
+
+    print(markdown_to_html_node(big_doc).to_html())

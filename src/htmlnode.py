@@ -14,9 +14,10 @@ class Tag(Enum):
     H5 = "h5"
     H6 = "h6"
     UL = "ul"
+    OL = "ol"
     LI = "li"
     IMG = "img"
-    CODE = "code"  # DID YOU THINK OF <pre></pre> ???
+    CODE = "code" 
     QUOTE = "blockquote"
     DIV = "div"
 
