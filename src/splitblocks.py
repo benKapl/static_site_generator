@@ -77,15 +77,24 @@ def is_ordered_list(text: str) -> bool:
 
 
 
+def strip_markdown_quote(text: str) -> str:
+    """ Strip markdown quote delimiter (">")
+    at the begining of each code line
+    """
+    lines = text.split("\n")
+    return "\n".join([line.lstrip("> ") for line in lines])
+
+
+
 if __name__ == "__main__":
     from pprint import pprint
 
-    test = """```python
-def add(a, b)
-    return a + b
-```"""
+    test = """> Ceci est une citation
+> Que se passe-t-il si je continue avec des sauts de lignes ?"""
 
-    print(is_code(test))
+    print(test)
+
+    print(strip_markdown_quote(test))
 
 
 

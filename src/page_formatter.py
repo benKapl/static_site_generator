@@ -23,15 +23,18 @@ def text_to_textnodes(text: str) -> List[TextNode]:
     """Take a raw string full of inline markdown element and split it
     into a list of relevant TextNodes
     """
-    firstnode = TextNode(text, TextType.TEXT)
+    if not text:
+        return [TextNode("", TextType.TEXT)]
+    firstnode = TextNode(f"{'' if not text else text}", TextType.TEXT)
     nodes_with_image = split_nodes_image([firstnode])
     nodes_with_link = split_nodes_link(nodes_with_image)
     nodes_with_bold = split_nodes_delimiter(nodes_with_link, "**", TextType.BOLD)
     nodes_with_italic = split_nodes_delimiter(nodes_with_bold, "*", TextType.ITALIC)
-    nodes_with_code = split_nodes_delimiter(nodes_with_italic, "`", TextType.CODE)
+    all_nodes = split_nodes_delimiter(nodes_with_italic, "`", TextType.CODE) # add code nodes
     
     # return all nodes with empty textnodes removed
-    return [node for node in nodes_with_code if not (node.text=="" and TextType.TEXT)]
+    return all_nodes
+    return [node for node in all_nodes if not (node.text=="" and TextType.TEXT)]
 
 
 def text_node_to_html_node(text_node: TextNode):
@@ -72,10 +75,10 @@ def text_to_children(text: str) -> List[HTMLNode]:
 def markdown_to_html_node(markdown: str) -> HTMLNode:
 
     blocks = markdown_to_blocks(markdown)
-    for block in blocks: 
-        print(block)
+
     document_nodes = []
     for block in blocks:
+        # print(block_to_block_type(block), block)
         match block_to_block_type(block):
             case BlockType.PARAGRAPH:
                 document_nodes.append(ParentNode(tag=Tag.P, children=text_to_children(block)))
@@ -85,9 +88,11 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
             case BlockType.CODE:
                 document_nodes.append(ParentNode(tag=Tag.CODE, 
                                                  children=text_to_children(strip_markdown_code(block))))
+            case BlockType.QUOTE:
+                document_nodes.append(ParentNode(tag=Tag.QUOTE, 
+                                                 children=text_to_children(strip_markdown_quote(block))))
 
     return ParentNode(Tag.DIV, children=document_nodes)
-## ATTENTION : Code blocks should be surrounded by a <code> tag nested inside a <pre> tag.
 
 
 def get_heading_tag(text: str) -> Tag:
@@ -137,10 +142,24 @@ def strip_markdown_code(text: str) -> str:
     return "\n".join(lines).strip()
 
 
+def strip_markdown_quote(text: str) -> str:
+    """ Strip markdown quote delimiter (">") and spaces
+    at the begining of each code line
+    """
+    lines = text.split("\n")
+    # removed block quotes from lines
+    lines = [line.lstrip("> ") for line in lines]
+    # Add html line break if there are more than one line
+    if len(lines) > 1:
+        return "\n".join([f"{line}<br>" for line in lines])
+    return "\n".join(lines)
 
 
 if __name__ == "__main__":
     from pprint import pprint
+
+    print(text_to_textnodes(""))
+
 
     text = "This is a **bold text** with an *italic* word and a `code block` and **another bold text** and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
     nodes = text_to_textnodes(text)
@@ -170,6 +189,10 @@ def add(a, b)
 ## partie 2
 
 coucou la partie 2 !
+
+>
+
+etc ztc
 """
 
     # pprint(markdown_to_html_node(html_doc).children)
