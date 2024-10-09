@@ -52,8 +52,15 @@ class TestBlockToBlockType:
         input_case = "##This is NOT a heading"
         assert block_to_block_type(input_case) == BlockType.PARAGRAPH
  
-    def test_is_code_true(self):
+    def test_is_code_one_line_true(self):
         input_case = "```###### # Despite it's look, it's code my friend```"
+        assert block_to_block_type(input_case) == BlockType.CODE
+
+    def test_is_code_multi_line_true(self):
+        input_case = """```python
+def add(a, b)
+    return a + b
+```"""
         assert block_to_block_type(input_case) == BlockType.CODE
 
     def test_is_code_false(self):

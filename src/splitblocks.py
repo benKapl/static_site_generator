@@ -1,9 +1,11 @@
 from enum import Enum
 import re
 
+from htmlnode import Tag
+
 
 class BlockType(Enum):
-    PARAGRAPH = 1
+    PARAGRAPH = Tag.P
     HEADING = 2
     CODE = 3
     QUOTE = 4
@@ -49,7 +51,7 @@ def is_heading(text: str) -> bool:
 
 def is_code(text: str) -> bool:
     """Determine if the input text is a markdown code block"""
-    pattern = r'^```.*```$'
+    pattern = r'^```[\s\S]*?```$'
     return bool(re.match(pattern, text))
 
 def is_quote(text: str) -> bool:
@@ -75,17 +77,16 @@ def is_ordered_list(text: str) -> bool:
 
 
 
-
 if __name__ == "__main__":
     from pprint import pprint
 
-    test = "1. dsfzf\n2.       sdfsdfs\n4. sdfsdfs"
+    test = """```python
+def add(a, b)
+    return a + b
+```"""
 
-    print(is_ordered_list(test))
-    # print(block_to_block_type(test))
+    print(is_code(test))
 
 
-    # pprint(markdown_to_blocks(test))
-    # print(len(markdown_to_blocks(test)))
 
 

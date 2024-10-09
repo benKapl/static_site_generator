@@ -72,6 +72,8 @@ def text_to_children(text: str) -> List[HTMLNode]:
 def markdown_to_html_node(markdown: str) -> HTMLNode:
 
     blocks = markdown_to_blocks(markdown)
+    for block in blocks: 
+        print(block)
     document_nodes = []
     for block in blocks:
         match block_to_block_type(block):
@@ -80,8 +82,12 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
             case BlockType.HEADING:
                 document_nodes.append(ParentNode(tag=get_heading_tag(block), 
                                                  children=text_to_children(strip_markdown_heading(block))))
+            case BlockType.CODE:
+                document_nodes.append(ParentNode(tag=Tag.CODE, 
+                                                 children=text_to_children(strip_markdown_code(block))))
 
     return ParentNode(Tag.DIV, children=document_nodes)
+## ATTENTION : Code blocks should be surrounded by a <code> tag nested inside a <pre> tag.
 
 
 def get_heading_tag(text: str) -> Tag:
@@ -107,17 +113,30 @@ def get_heading_tag(text: str) -> Tag:
         case _:
             raise Exception("invalid number of #")
 
+
 def strip_markdown_heading(text: str) -> str:
-    """ Strip markdown hashtags at the beginning of a 
-    markdown heading block
+    """ Strip markdown hashtags at the beginning 
+        of a markdown heading block
     """
+    # get all hashtags
     markdown_headings = re.match(r'^#{1,6}', text).group() #type: ignore
     if not markdown_headings:
-        raise Exception("not a heading block")
+        raise Exception("not a valid heading block")
     return text.lstrip(markdown_headings).lstrip()
 
 
-## ATTENTION : Code blocks should be surrounded by a <code> tag nested inside a <pre> tag.
+def strip_markdown_code(text: str) -> str:
+    """ Strip markdown code backticks at the beginning 
+        and end of a markdown code block
+    """
+    lines = text.split("\n")
+    if not "```" in (lines[0] and lines[-1]):
+        raise Exception(("not a valid code block"))
+    lines.pop(0)
+    lines.pop()
+    return "\n".join(lines).strip()
+
+
 
 
 if __name__ == "__main__":
@@ -139,23 +158,21 @@ if __name__ == "__main__":
     html_doc = """
 ## Partie 1
 
-*full text my friend*
-
 Voici une partie avec un headings. Je vais mettre un image tient : ![Big O Graph](https://cdn-media-1.freecodecamp.org/images/1*KfZYFUT2OKfjekJlCeYvuQ.jpeg)
 
 Ainsi qu'un lien : [-- source](https://www.bigocheatsheet.com/)
 
-Et si je décidait de les séparer ?
-
-![Big O Graph](https://cdn-media-1.freecodecamp.org/images/1*KfZYFUT2OKfjekJlCeYvuQ.jpeg)
-
-[-- source](https://www.bigocheatsheet.com/)
+```python
+def add(a, b)
+    return a + b
+```
 
 ## partie 2
 
-nouvelle partie youhou
+coucou la partie 2 !
 """
 
+    # pprint(markdown_to_html_node(html_doc).children)
     print(markdown_to_html_node(html_doc).to_html())
     # for i in markdown_to_blocks(html_doc):
     #     print(i)
