@@ -23,20 +23,15 @@ def text_to_textnodes(text: str) -> List[TextNode]:
     """Take a raw string full of inline markdown element and split it
     into a list of relevant TextNodes
     """
-    if is_markdown_image(text):
-        firstnode = TextNode(text, TextType.IMAGE)
-    elif is_markdown_link(text): 
-        firstnode = TextNode(text, TextType.LINK)
-    else:
-        firstnode = TextNode(text, TextType.TEXT)
-        
-    nodes_with_bold = split_nodes_delimiter([firstnode], "**", TextType.BOLD)
+    firstnode = TextNode(text, TextType.TEXT)
+    nodes_with_image = split_nodes_image([firstnode])
+    nodes_with_link = split_nodes_link(nodes_with_image)
+    nodes_with_bold = split_nodes_delimiter(nodes_with_link, "**", TextType.BOLD)
     nodes_with_italic = split_nodes_delimiter(nodes_with_bold, "*", TextType.ITALIC)
     nodes_with_code = split_nodes_delimiter(nodes_with_italic, "`", TextType.CODE)
-    nodes_with_image = split_nodes_image(nodes_with_code)
-    nodes_with_link = split_nodes_link(nodes_with_image)
-
-    return nodes_with_link
+    
+    # return all nodes with empty textnodes removed
+    return [node for node in nodes_with_code if not (node.text=="" and TextType.TEXT)]
 
 
 def text_node_to_html_node(text_node: TextNode):
@@ -67,35 +62,65 @@ def text_node_to_html_node(text_node: TextNode):
         #     raise Exception("not a valid text_type")
 
 
+def text_to_children(text: str) -> List[HTMLNode]:
+    """Takes a raw text and return a list of HTMLNodes
+    """
+    textnodes = text_to_textnodes(text)
+    return [text_node_to_html_node(node) for node in textnodes]
+
+
 def markdown_to_html_node(markdown: str) -> HTMLNode:
+
     blocks = markdown_to_blocks(markdown)
     document_nodes = []
     for block in blocks:
         match block_to_block_type(block):
             case BlockType.PARAGRAPH:
-                textnodes = text_to_textnodes(block)
-                children = [text_node_to_html_node(node) for node in textnodes]
-                parent_node = ParentNode(tag=Tag.P, children=children)
-                document_nodes.append(parent_node)
+                document_nodes.append(ParentNode(tag=Tag.P, children=text_to_children(block)))
             case BlockType.HEADING:
-                pass
+                document_nodes.append(ParentNode(tag=get_heading_tag(block), 
+                                                 children=text_to_children(strip_markdown_heading(block))))
 
     return ParentNode(Tag.DIV, children=document_nodes)
 
+
+def get_heading_tag(text: str) -> Tag:
+    """ Return the html heading tag of a markdown text block 
+    based on the number of hashtags in it
+    """
+    # Get the number of "#" in the beginning of the block
+    heading_type = len(re.match(r'^#{1,6}', text).group()) #type: ignore
+    
+    match heading_type:
+        case 1:
+            return Tag.H1
+        case 2:
+            return Tag.H2
+        case 3:
+            return Tag.H3
+        case 4:
+            return Tag.H4
+        case 5:
+            return Tag.H5
+        case 6:
+            return Tag.H6
+        case _:
+            raise Exception("invalid number of #")
+
+def strip_markdown_heading(text: str) -> str:
+    """ Strip markdown hashtags at the beginning of a 
+    markdown heading block
+    """
+    markdown_headings = re.match(r'^#{1,6}', text).group() #type: ignore
+    if not markdown_headings:
+        raise Exception("not a heading block")
+    return text.lstrip(markdown_headings).lstrip()
 
 
 ## ATTENTION : Code blocks should be surrounded by a <code> tag nested inside a <pre> tag.
 
 
-
-
-
-
 if __name__ == "__main__":
-    text = "[Big O Graph](htthjkjps://cdn-media-1.freecodecamp.org/images/1*KfZYFUT2OKfjekJlCeYvuQ.jpeg)"
-    print(is_markdown_link(text))
-
-
     from pprint import pprint
 
     text = "This is a **bold text** with an *italic* word and a `code block` and **another bold text** and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
@@ -112,6 +137,32 @@ if __name__ == "__main__":
 
 
     html_doc = """
+## Partie 1
+
+*full text my friend*
+
+Voici une partie avec un headings. Je vais mettre un image tient : ![Big O Graph](https://cdn-media-1.freecodecamp.org/images/1*KfZYFUT2OKfjekJlCeYvuQ.jpeg)
+
+Ainsi qu'un lien : [-- source](https://www.bigocheatsheet.com/)
+
+Et si je décidait de les séparer ?
+
+![Big O Graph](https://cdn-media-1.freecodecamp.org/images/1*KfZYFUT2OKfjekJlCeYvuQ.jpeg)
+
+[-- source](https://www.bigocheatsheet.com/)
+
+## partie 2
+
+nouvelle partie youhou
+"""
+
+    print(markdown_to_html_node(html_doc).to_html())
+    # for i in markdown_to_blocks(html_doc):
+    #     print(i)
+
+
+
+    big_doc = """
 ["Big O"](https://en.wikipedia.org/wiki/Big_O_notation) analysis (pronounced "Big Oh", not "Big Zero") is one way to compare the practicality of algorithms.
 
 >[!hint] Big O is a characterization of algorithms according to their worst-case growth rates
@@ -146,7 +197,3 @@ The algorithms that slow down the fastest in our chart are the factorial and exp
 > [!attention] [[Constants don't matter]]
 
 """
-
-    pprint(markdown_to_html_node(html_doc))
-    # for i in markdown_to_blocks(html_doc):
-    #     print(i)

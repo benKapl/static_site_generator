@@ -17,6 +17,7 @@ class Tag(Enum):
     LI = "li"
     IMG = "img"
     CODE = "code"  # DID YOU THINK OF <pre></pre> ???
+    QUOTE = "blockquote"
     DIV = "div"
 
 
@@ -82,13 +83,15 @@ class ParentNode(HTMLNode):
         if not self.children:
             raise ValueError("ParentNode object must have children")
 
-        return f"<{self.tag.value}>{''.join([child.to_html() for child in self.children])}</{self.tag.value}>"
+        return f"{'<pre>' if self.tag==Tag.CODE else ''}<{self.tag.value}>{''.join([child.to_html() for child in self.children])}</{self.tag.value}>{'</pre>' if self.tag==Tag.CODE else ''}"
 
 
         
 
 
 if __name__ == "__main__":
-    pass
+    text = LeafNode(None, value="some text")   
+    code = ParentNode(Tag.CODE, children=[text])
+    print(code.to_html())
 
 
