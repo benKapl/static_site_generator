@@ -27,7 +27,6 @@ def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: 
     """
     new_nodes = []
     for node in old_nodes:
-        
         # If an "old node" is not a "text" type, just add it to the new list as-is
         if node.text_type != TextType.TEXT:
             new_nodes.append(node)

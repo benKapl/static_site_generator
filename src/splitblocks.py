@@ -16,7 +16,9 @@ def markdown_to_blocks(markdown: str) -> list:
     Takes a raw Markdown string (representing a full document) as input 
     and returns a list of "block" strings.
     """
-    blocks = markdown.split("\n\n")
+    # Replace non breaking spaces "\xa0" with spaces " "
+    clean_space_markdown = markdown.replace("\xa0", " ")
+    blocks = clean_space_markdown.split("\n\n")
     # Strip whitespace for each block
     stripped_blocks = [block.strip() for block in blocks]
     # Return a list with empty blocks removed
@@ -70,6 +72,7 @@ def is_ordered_list(text: str) -> bool:
     # Compare pattern with a list of the first 3 characters of each line
     numbers = [line[0:3] for line in lines]
     return numbers == pattern
+
 
 
 

@@ -1,7 +1,5 @@
 from splitblocks import BlockType, markdown_to_blocks, block_to_block_type
 
-import pytest
-
 class TestMarkdownToBlocks:
     def test_single_block(self):
         markdown = "# This is a heading"
@@ -33,6 +31,15 @@ This is a paragraph of text. It has some **bold** and *italic* words inside of i
     def test_whitespace_only(self):
         markdown = "\n\n\n"
         expected_output = []
+        assert markdown_to_blocks(markdown) == expected_output
+
+    def test_delete_xa0(self):
+        markdown = """We write Big-O notation like this: `O(formula)`
+
+Where `formula` describes how an algorithm's run time or space requirements grow **as the input size grows.**"""
+        expected_output = ['We write Big-O notation like this: `O(formula)`',
+                           "Where `formula` describes how an algorithm's run time or space requirements "
+                           "grow **as the input size grows.**"]
         assert markdown_to_blocks(markdown) == expected_output
 
 
