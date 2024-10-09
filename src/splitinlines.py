@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-from textnode import TextNode, TextType, text_node_to_html_node
+from textnode import TextNode, TextType
 
 
 def extract_markdown_images(text: str) -> list:
@@ -126,42 +126,5 @@ def split_nodes_link(old_nodes) -> List[TextNode]:
     return [node for node in new_nodes if node.text or node.text_type == TextType.LINK]
 
 
-def text_to_textnodes(text: str) -> List[TextNode]:
-    """Take a raw string full of inline markdown element and split it
-    into a list of relevant TextNodes
-    """
-    textnode_only = TextNode(text, TextType.TEXT)
-    text_bold = split_nodes_delimiter([textnode_only], "**", TextType.BOLD)
-    text_bold_italic = split_nodes_delimiter(text_bold, "*", TextType.ITALIC)
-    text_bold_italic_code = split_nodes_delimiter(text_bold_italic, "`", TextType.CODE)
-    text_bold_italic_code_image = split_nodes_image(text_bold_italic_code)
-    text_bold_italic_code_image_link = split_nodes_link(text_bold_italic_code_image)
-
-    return text_bold_italic_code_image_link
-
-
-
-
 if __name__ == "__main__":
-    from pprint import pprint
-
-    text = "This is a **bold text** with an *italic* word and a `code block` and **another bold text** and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
-    nodes = text_to_textnodes(text)
-    print(nodes)
-
-    html_elements = [text_node_to_html_node(node) for node in nodes]
-    pprint(html_elements)
-    # pprint("".join([leafnode.to_html() for leafnode in html_elements]))
-    # for node in nodes: 
-    #         print(node)
-    #         leafnode = text_node_to_html_node(node) 
-    #         print(leafnode.to_html())
-
-
-""" [
-   TextNode("This is text with a ", TextType.NORMAL),
-   TextNode("code block", TextType.CODE),r
-   TextNode(" word", TextType.NORMAL),
-]
-"""
-
+    pass

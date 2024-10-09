@@ -2,11 +2,10 @@ import pytest
 
 from textnode import TextNode, TextType
 from splitinlines import (split_nodes_delimiter, 
-                               split_nodes_image,
-                               split_nodes_link,
-                               extract_markdown_images, 
-                               extract_markdown_links, 
-                               text_to_textnodes)
+                          split_nodes_image,
+                          split_nodes_link,
+                          extract_markdown_images, 
+                          extract_markdown_links)
 
 class TestSplitNodesDelimiter:
     def test_bold_delimiter(self):
@@ -170,55 +169,3 @@ class TestExtractMdLinks:
     def test_special_characters(self):
         text = "This is text with a link [t(o@boot dev]]](htttps://www.boo}t.dev)"
         assert extract_markdown_links(text) == [("t(o@boot dev]]", "htttps://www.boo}t.dev")]
-
-
-class TestTextToTextNodes:
-
-    def test_all_cases(self):
-        input_text = """This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"""
-        expected_output = [
-            TextNode("This is ", TextType.TEXT),
-            TextNode("text", TextType.BOLD),
-            TextNode(" with an ", TextType.TEXT),
-            TextNode("italic", TextType.ITALIC),
-            TextNode(" word and a ", TextType.TEXT),
-            TextNode("code block", TextType.CODE),
-            TextNode(" and an ", TextType.TEXT),
-            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
-            TextNode(" and a ", TextType.TEXT),
-            TextNode("link", TextType.LINK, "https://boot.dev"),
-        ]
-        assert text_to_textnodes(input_text) == expected_output
-
-    def test_several_bold_delimiters(self):
-        input_text = "This is **bold text** and **another bold** section."
-        expected_output = [
-            TextNode("This is ", TextType.TEXT),
-            TextNode("bold text", TextType.BOLD),
-            TextNode(" and ", TextType.TEXT),
-            TextNode("another bold", TextType.BOLD),
-            TextNode(" section.", TextType.TEXT)
-]
-        assert text_to_textnodes(input_text) == expected_output
-
-    def test_entire_text_italic(self):
-        input_text = "*entire text as italic*"
-        assert text_to_textnodes(input_text) == [TextNode("entire text as italic", TextType.ITALIC)]
-
-    def test_multiple_images(self):
-        input_text = "This is an image ![first image](http://example.com/1.jpg) and another image ![second image](http://example.com/2.jpg)."
-        expected_output = [
-            TextNode("This is an image ", TextType.TEXT),
-            TextNode("first image", TextType.IMAGE, "http://example.com/1.jpg"),
-            TextNode(" and another image ", TextType.TEXT),
-            TextNode("second image", TextType.IMAGE, "http://example.com/2.jpg"),
-            TextNode(".", TextType.TEXT)
-        ]
-        assert text_to_textnodes(input_text) == expected_output
-
-    def test_entire_text_link(self):
-        input_text = "[Boot.dev](https://boot.dev)"
-        assert text_to_textnodes(input_text) == [TextNode("Boot.dev", TextType.LINK, "https://boot.dev")]
-
-    def test_input_is_textnode(self):
-        pass
