@@ -97,8 +97,8 @@ def get_heading_tag(text: str) -> Tag:
     based on the number of hashtags in it
     """
     # Get the number of "#" in the beginning of the block
+    # If the number is aobe
     heading_type = len(re.match(r'^#{1,6}', text).group()) #type: ignore
-    
     match heading_type:
         case 1:
             return Tag.H1
@@ -122,8 +122,6 @@ def format_markdown_heading(text: str) -> str:
     """
     # get all hashtags
     markdown_headings = re.match(r'^#{1,6}', text).group() #type: ignore
-    if not markdown_headings:
-        raise Exception("not a valid heading block")
     return text.lstrip(markdown_headings).lstrip()
 
 
@@ -132,7 +130,7 @@ def format_markdown_code(text: str) -> str:
         and end of a markdown code block
     """
     lines = text.split("\n")
-    if not "```" in (lines[0] and lines[-1]):
+    if not re.match(r'^```', lines[0]) or not re.search(r'```$', lines[-1]):
         raise Exception(("not a valid code block"))
     lines.pop(0)
     lines.pop()
@@ -144,12 +142,9 @@ def format_markdown_quote(text: str) -> str:
     at the begining of each code line
     """
     lines = text.split("\n")
-    # removed block quotes from lines
-    lines = [line.lstrip("> ") for line in lines]
-    # Add html line break if there are more than one line
-    if len(lines) > 1:
-        return "\n".join([f"{line}<br>" for line in lines])
-    return "\n".join(lines)
+    # Remove block quotes from lines
+    # and add html line break if there are more than one line
+    return "<br>".join([line.lstrip("> ") for line in lines])
 
 
 def markdown_lists_to_li_nodes(text: str, index: int) -> List[ParentNode]:
@@ -165,81 +160,45 @@ def markdown_lists_to_li_nodes(text: str, index: int) -> List[ParentNode]:
 
 if __name__ == "__main__":
     from pprint import pprint
-    input_text = "*entire text as italic*"
+    text = "1. Un\n2. Deux"
 
+    # pprint(str(markdown_lists_to_li_nodes(text, 2)))
 
-    ul_doc = """
-> voici une preière list
-> avec des élément **gras** mais non ordonnés
+    big_doc = """> Documentation
+> - [Wikipedia](https://en.wikipedia.org/wiki/NP_(complexity)) 
+> - [Vidéo](https://youtu.be/zVLSrrIKKF0)
 
-1. et de un
-2. et de *deux*
-3. et de trois
-"""
+`NP` (which stands for [nondeterministic polynomial time](https://en.wikipedia.org/wiki/NP_(complexity)) is the set of problems whose solutions can be _verified_ in [polynomial time](app://obsidian.md/Polynomial%20Time%20=%20P), but not necessarily _solved_ in polynomial time.
 
-    # pprint(markdown_to_html_node(ul_doc).children)
-    # print(markdown_to_html_node(ul_doc).to_html())
-    # for i in markdown_to_blocks(html_doc):
-    #     print(i)
+## P is in NP
 
+Because all problems that can be _solved_ in polynomial time can also be _verified_ in polynomial time, all the problems in `P` are also in `NP`.
 
+![P in NP](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/vO4GfRb.png)
 
-    big_doc = """
-["Big O"](https://en.wikipedia.org/wiki/Big_O_notation) analysis (pronounced "Big Oh", not "Big Zero") is one way to compare the practicality of algorithms.
+### The Oracle
 
->[!hint] Big O is a characterization of algorithms according to their worst-case growth rates
+A good way of thinking about problems in `NP` is to imagine that we have a magic oracle that gives us potential solutions to problems. Here would be our **process** for finding if a problem is in `NP`:
 
-We write Big-O notation like this: `O(formula)`
-
-Where `formula` describes how an algorithm's run time or space requirements grow **as the input size grows.**
-
-- [[O(1)]] - constant
-- [[O(log(n))]] - logarithmic
-- [[O(n)]] - linear
-- [[O(n x log(n))]]
-- [[O(n^2)]] - squared   + a peculiar one : [[O(nm)]]
-- [[O(2^n)]] - exponential
-- [[O(n!)]] - factorial
-
-The following chart shows the growth rate of several different Big O categories. The size of the input is shown on the `x axis` and how long the algorithm will take to complete is shown on the `y axis`.
-
-![Big O Graph](https://cdn-media-1.freecodecamp.org/images/1*KfZYFUT2OKfjekJlCeYvuQ.jpeg)
-
-[-- source](https://www.bigocheatsheet.com/)
-
-As the size of inputs grows, the algorithms become slower to complete (take longer to run). The _rate_ at which they become slower is defined by their Big O category.
-
-For example, `O(n)` algorithms slow down more slowly than `O(n^2)` algorithms.
-
-## The worst Big-O category?
-
-The algorithms that slow down the fastest in our chart are the factorial and exponential algorithms, or `O(n!),` and `O(2^n)`.
-
-
-> [!attention] [[Constants don't matter]]
-
-"""
-
-
-    html_doc = """
-## Partie 1
-
-Voici une partie avec un headings. Je vais mettre un image tient : ![Big O Graph](https://cdn-media-1.freecodecamp.org/images/1*KfZYFUT2OKfjekJlCeYvuQ.jpeg)
-
-Ainsi qu'un lien : [-- source](https://www.bigocheatsheet.com/)
+- Present the problem to the **magic oracle**
+- The magic oracle gives us a *potential solution*
+- We verify in polynomial time that the solution is correct
 
 ```python
-def add(a, b)
-    return a + b
+foo = "random code to prove code block works"
+print(foo)
+# result of foo
 ```
 
-## partie 2
+If we can do the verification in polynomial time, the problem is in `NP`, otherwise, it isn't.
 
-coucou la partie 2 !
+#### Example of NP problems
 
->
-
-etc ztc
+- [Cryptography](app://obsidian.md/Cryptography) :
+- [Traveling Salesman Problem](app://obsidian.md/Traveling%20Salesman%20Problem)
 """
+
+
+
 
     print(markdown_to_html_node(big_doc).to_html())
