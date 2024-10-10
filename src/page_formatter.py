@@ -160,45 +160,37 @@ def markdown_lists_to_li_nodes(text: str, index: int) -> List[ParentNode]:
 
 if __name__ == "__main__":
     from pprint import pprint
-    text = "1. Un\n2. Deux"
+    text = """# Tolkien Fan Club
 
-    # pprint(str(markdown_lists_to_li_nodes(text, 2)))
+**I like Tolkien**. Read my [first post here](/majesty) (sorry the link doesn't work yet)
 
-    big_doc = """> Documentation
-> - [Wikipedia](https://en.wikipedia.org/wiki/NP_(complexity)) 
-> - [Vidéo](https://youtu.be/zVLSrrIKKF0)
+> All that is gold does not glitter
 
-`NP` (which stands for [nondeterministic polynomial time](https://en.wikipedia.org/wiki/NP_(complexity)) is the set of problems whose solutions can be _verified_ in [polynomial time](app://obsidian.md/Polynomial%20Time%20=%20P), but not necessarily _solved_ in polynomial time.
+## Reasons I like Tolkien
 
-## P is in NP
+* You can spend years studying the legendarium and still not understand its depths
+* It can be enjoyed by children and adults alike
+* Disney *didn't ruin it*
+* It created an entirely new genre of fantasy
 
-Because all problems that can be _solved_ in polynomial time can also be _verified_ in polynomial time, all the problems in `P` are also in `NP`.
+## My favorite characters (in order)
 
-![P in NP](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/vO4GfRb.png)
+1. Gandalf
+2. Bilbo
+3. Sam
+4. Glorfindel
+5. Galadriel
+6. Elrond
+7. Thorin
+8. Sauron
+9. Aragorn
 
-### The Oracle
+Here's what `elflang` looks like (the perfect coding language):
 
-A good way of thinking about problems in `NP` is to imagine that we have a magic oracle that gives us potential solutions to problems. Here would be our **process** for finding if a problem is in `NP`:
-
-- Present the problem to the **magic oracle**
-- The magic oracle gives us a *potential solution*
-- We verify in polynomial time that the solution is correct
-
-```python
-foo = "random code to prove code block works"
-print(foo)
-# result of foo
 ```
+func main(){
+    fmt.Println("Hello, World!")
+}
+```"""
 
-If we can do the verification in polynomial time, the problem is in `NP`, otherwise, it isn't.
-
-#### Example of NP problems
-
-- [Cryptography](app://obsidian.md/Cryptography) :
-- [Traveling Salesman Problem](app://obsidian.md/Traveling%20Salesman%20Problem)
-"""
-
-
-
-
-    print(markdown_to_html_node(big_doc).to_html())
+    print(markdown_to_html_node(text).to_html())

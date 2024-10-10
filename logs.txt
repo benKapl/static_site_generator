@@ -1,0 +1,5 @@
+2024-10-10 10:57:38,893 - INFO - FILE DELETED : /home/kapubuntu/bootdotdev/projects/static_generator/public/styles.css
+2024-10-10 10:57:38,893 - INFO - FILE DELETED : /home/kapubuntu/bootdotdev/projects/static_generator/public/index.html
+2024-10-10 10:57:38,894 - INFO - DIRECTORY CREATED : FROM /home/kapubuntu/bootdotdev/projects/static_generator/static/images -> TO /home/kapubuntu/bootdotdev/projects/static_generator/public/images
+2024-10-10 10:57:38,899 - INFO - FILE COPIED : FROM /home/kapubuntu/bootdotdev/projects/static_generator/static/images/rivendell.png -> TO /home/kapubuntu/bootdotdev/projects/static_generator/public/images/rivendell.png
+2024-10-10 10:57:38,900 - INFO - FILE COPIED : FROM /home/kapubuntu/bootdotdev/projects/static_generator/static/index.css -> TO /home/kapubuntu/bootdotdev/projects/static_generator/public/index.css
