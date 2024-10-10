@@ -1,5 +1,7 @@
-2024-10-10 11:01:01,579 - INFO - DIRECTORY DELETED : /home/kapubuntu/bootdotdev/projects/static_generator/public/images
-2024-10-10 11:01:01,579 - INFO - FILE DELETED : /home/kapubuntu/bootdotdev/projects/static_generator/public/index.css
-2024-10-10 11:01:01,586 - INFO - DIRECTORY CREATED : FROM /home/kapubuntu/bootdotdev/projects/static_generator/static/images -> TO /home/kapubuntu/bootdotdev/projects/static_generator/public/images
-2024-10-10 11:01:01,589 - INFO - FILE COPIED : FROM /home/kapubuntu/bootdotdev/projects/static_generator/static/images/rivendell.png -> TO /home/kapubuntu/bootdotdev/projects/static_generator/public/images/rivendell.png
-2024-10-10 11:01:01,590 - INFO - FILE COPIED : FROM /home/kapubuntu/bootdotdev/projects/static_generator/static/index.css -> TO /home/kapubuntu/bootdotdev/projects/static_generator/public/index.css
+2024-10-10 15:26:14,588 - INFO - DIRECTORY DELETED : /home/kapubuntu/bootdotdev/projects/static_generator/public/images
+2024-10-10 15:26:14,588 - INFO - FILE DELETED : /home/kapubuntu/bootdotdev/projects/static_generator/public/index.css
+2024-10-10 15:26:14,588 - INFO - FILE DELETED : /home/kapubuntu/bootdotdev/projects/static_generator/public/index.html
+2024-10-10 15:26:14,596 - INFO - DIRECTORY CREATED : FROM /home/kapubuntu/bootdotdev/projects/static_generator/static/images -> TO /home/kapubuntu/bootdotdev/projects/static_generator/public/images
+2024-10-10 15:26:14,599 - INFO - FILE COPIED : FROM /home/kapubuntu/bootdotdev/projects/static_generator/static/images/rivendell.png -> TO /home/kapubuntu/bootdotdev/projects/static_generator/public/images/rivendell.png
+2024-10-10 15:26:14,600 - INFO - FILE COPIED : FROM /home/kapubuntu/bootdotdev/projects/static_generator/static/index.css -> TO /home/kapubuntu/bootdotdev/projects/static_generator/public/index.css
+2024-10-10 15:26:14,600 - INFO - Generating page from /home/kapubuntu/bootdotdev/projects/static_generator/content/index.md to /home/kapubuntu/bootdotdev/projects/static_generator/public using /home/kapubuntu/bootdotdev/projects/static_generator/template.html
