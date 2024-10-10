@@ -1,6 +1,6 @@
 # Tolkien Fan Club
 
-**I like Tolkien**. Read my [first post here](/majesty) (sorry the link doesn't work yet)
+**I like Tolkien**. Read my [first post here](/majesty)
 
 > All that is gold does not glitter
 
@@ -13,7 +13,7 @@
 
 ## My favorite characters (in order)
 
-1. Gandalf
+1. Gandalfo
 2. Bilbo
 3. Sam
 4. Glorfindel
