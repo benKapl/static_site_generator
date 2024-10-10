@@ -7,7 +7,8 @@ from page_formatter import (text_to_textnodes,
                             format_markdown_heading,
                             format_markdown_code,
                             format_markdown_quote,
-                            markdown_lists_to_li_nodes)
+                            markdown_lists_to_li_nodes,
+                            extract_title)
  
 from textnode import TextType, TextNode
 from htmlnode import Tag, ParentNode, LeafNode
@@ -140,8 +141,6 @@ print(foo)
         assert markdown_to_html_node(input_text).to_html() == expected
 
 
-
-
 class TestHelperFunctions:
     def test_get_heading_tag(self):
         assert get_heading_tag("# Heading") == Tag.H1
@@ -202,3 +201,23 @@ class TestHelperFunctions:
  "'li'>, value=None, children=[LeafNode(tag=None, value= Deux, children=None, "
  'props=None)], props=None)]')
         assert str(markdown_lists_to_li_nodes(text, 2)) == expected
+
+
+class TestExtractMarkdownTitle:
+    def test_valid_title_one_line(self):
+        markdown = "# Title"
+        assert extract_title(markdown) == "Title"
+
+    def test_valid_title_multiple_lines(self):
+        markdown = "# Title\n\nParagraph"
+        assert extract_title(markdown) == "Title"
+
+    def test_invalid_title_h3(self):
+        markdown = "### Title\n\nParagraph"
+        with pytest.raises(Exception) as e:
+            extract_title(markdown)
+
+    def test_invalid_title_h2_then_h1(self):
+        markdown = "## Title\n# Another Title\n\nParagraph"
+        with pytest.raises(Exception) as e:
+            extract_title(markdown)

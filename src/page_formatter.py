@@ -157,40 +157,24 @@ def markdown_lists_to_li_nodes(text: str, index: int) -> List[ParentNode]:
     return [ParentNode(Tag.LI, children=text_to_children(line)) for line in lines]
     
 
+def extract_title(mardown: str) -> str:
+    """ get the title of a markdown document
+    """
+    pattern = r'^# '
+    lines = mardown.splitlines()
+    
+    if not re.match(pattern, lines[0]):
+        raise Exception("no title in document")
+
+    h1_title = re.match(r'^# ', lines[0]).group() #type: ignore
+    return lines[0].lstrip(h1_title).lstrip()
+
 
 if __name__ == "__main__":
     from pprint import pprint
-    text = """# Tolkien Fan Club
+    text = "# Tolkien Fan Club\nbzbozobr"
 
-**I like Tolkien**. Read my [first post here](/majesty) (sorry the link doesn't work yet)
+    print(extract_title(text))
 
-> All that is gold does not glitter
+    # print(re.findall(r'^# ', text))
 
-## Reasons I like Tolkien
-
-* You can spend years studying the legendarium and still not understand its depths
-* It can be enjoyed by children and adults alike
-* Disney *didn't ruin it*
-* It created an entirely new genre of fantasy
-
-## My favorite characters (in order)
-
-1. Gandalf
-2. Bilbo
-3. Sam
-4. Glorfindel
-5. Galadriel
-6. Elrond
-7. Thorin
-8. Sauron
-9. Aragorn
-
-Here's what `elflang` looks like (the perfect coding language):
-
-```
-func main(){
-    fmt.Println("Hello, World!")
-}
-```"""
-
-    print(markdown_to_html_node(text).to_html())
